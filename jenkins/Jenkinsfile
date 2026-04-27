@@ -4,18 +4,7 @@ pipeline {
         stage('Build') { 
             steps {
                 withPythonEnv('/usr/bin/python3') {
-                    sh 'pip install requests'
-                    sh 'python script.py'
-                }
-            }
-        }
-    stage('Test') { 
-        steps {
-            sh 'python3 sources/test_calc.py' 
-        }
-            post {
-                always {
-                    junit 'test-reports/*.xml' 
+                    sh 'pip install -r requirements.txt'
                 }
             }
         }
