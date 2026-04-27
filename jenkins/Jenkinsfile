@@ -4,7 +4,7 @@ pipeline {
         stage('Build') { 
             steps {
                 withPythonEnv('python3') {
-                    sh 'pip install -r sources/requirements.txt'
+                    sh 'pip3 install -r sources/requirements.txt'
                 }
             }
         }
