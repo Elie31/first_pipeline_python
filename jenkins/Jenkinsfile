@@ -3,9 +3,9 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
-withPythonEnv('/usr/bin/python3.9') {
-    sh 'python --version'
-}   
+                withPythonEnv('python3') {
+                    pysh 'python --version'
+                }
             }
         }
     }
