@@ -1,11 +1,11 @@
 pipeline {
-    agent any 
+    agent {
+        docker { image 'python:3.13.13-trixie' }
+    } 
     stages {
         stage('Build') { 
             steps {
-                withPythonEnv('python3') {
-                    pysh 'python --version'
-                }
+                sh 'python3 -m py_compile sources/add2vals.py sources/calc.py' 
             }
         }
     }
