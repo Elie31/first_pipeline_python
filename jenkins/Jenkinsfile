@@ -8,5 +8,17 @@ pipeline {
                 }
             }
         }
+        stage('test') { 
+            steps {
+                withPythonEnv('python3') {
+                    sh 'python3 sources/test_calc.py'
+                }
+            }
+            post {
+                always {
+                    junit 'test-reports/*.xml'
+                }
+            }   
+        }
     }
 }
