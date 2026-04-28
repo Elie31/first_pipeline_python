@@ -28,7 +28,7 @@ pipeline {
                     }
                     post {
                         always {
-                            archiveArtifacts artifacts: 'vuln-scan/*.json'
+                            archiveArtifacts artifacts: 'bandit-report.json'
                         }
                     }
                 }
@@ -37,14 +37,14 @@ pipeline {
                         withPythonEnv('python3') {
                             sh '''
                             pip install detect-secrets
-                            detect-secrets scan ./sources --all-files > secrets-${BUILD_NUMBER}.json
+                            detect-secrets scan ./sources --all-files > .secrets.baseline
                             python3 ./jenkins/detect_secrets.py
                             '''
                         }
                     }
                     post {
                         always {
-                            archiveArtifacts artifacts: 'secrets-scan/*.json'
+                            archiveArtifacts artifacts: '.secrets.baseline'
                         }
                     }
                 }
