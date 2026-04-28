@@ -6,11 +6,6 @@ the calc.py library's 'add2' function.
 import sys
 import calc
 
-import subprocess
-domain = input("Enter the Domain: ")
-output = subprocess.check_output(f"nslookup {domain}", shell=True, encoding='UTF-8')
-print(output)
-
 argnumbers = len(sys.argv) - 1
 
 if argnumbers == 2 :
