@@ -36,29 +36,16 @@ pipeline {
                     sh '''
                     set -e
                     pip install detect-secrets
-                    detect-secrets scan > .secrets.baseline
-                    python - <<EOF
-                    import json
-
-                    with open(".secrets.baseline") as f:
-                        data = json.load(f)
-
-                    results = data.get("results", {})
-
-                    if any(results.values()):
-                        print("❌ Secrets détectés !")
-                        exit(1)
-                    else:
-                        print("✅ Aucun secret détecté")
-                    EOF
+                    detect-secrets scan > ./jenkins/.secrets.baseline
+                    python3 ./jenkins/detect_secrets.py
                     '''
                 }
             }
             post {
                 always {
-                    archiveArtifacts artifacts: 'bandit-report.json'
+                    archiveArtifacts artifacts: './jenkins/.secrets.baseline'
                 }
-            }   
+            }
         }
     }
 }
