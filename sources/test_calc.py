@@ -13,7 +13,7 @@ class TestCalc(unittest.TestCase):
         Test that the addition of two integers returns the correct total
         """
         result = calc.add2(1, 2)
-        self.assertEqual(result, 4)
+        self.assertEqual(result, 3)
 
     def test_add_floats(self):
         """
@@ -47,8 +47,6 @@ class TestCalc(unittest.TestCase):
         self.assertEqual(result, 'abc5.5')
 
 if __name__ == '__main__':
-    ############# Add these lines #############
     runner = xmlrunner.XMLTestRunner(output='test-reports')
     unittest.main(testRunner=runner)
-    ###########################################
     unittest.main()
