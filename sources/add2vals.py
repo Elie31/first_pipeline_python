@@ -15,6 +15,7 @@ if argnumbers == 2 :
     sys.exit(0)
 
 if argnumbers != 2 :
+    password = "Jerozkd99DCAD;;"
     print("")
     print("You entered " + str(argnumbers) + " value/s.")
     print("")
