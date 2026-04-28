@@ -1,12 +1,39 @@
 pipeline {
-    agent {
-        docker { image 'node:24.15.0-alpine3.23' }
-    }
+    agent any
     stages {
-        stage('Test') {
+        stage('Build') { 
             steps {
-                sh 'node --eval "console.log(process.platform,process.env.CI)"'
+                withPythonEnv('python3') {
+                    sh 'pip3 install -r sources/requirements.txt'
+                }
             }
+        }
+        stage('Test') { 
+            steps {
+                withPythonEnv('python3') {
+                    sh 'python3 sources/test_calc.py'
+                }
+            }
+            post {
+                always {
+                    junit 'test-reports/*.xml'
+                }
+            }   
+        }
+        stage('Security Scan') { 
+            steps {
+                withPythonEnv('python3') {
+                    sh '''
+                    pip install bandit
+                    bandit -r . -lll -f json -o bandit-report.json
+                    '''
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'bandit-report.json'
+                }
+            }   
         }
     }
 }
