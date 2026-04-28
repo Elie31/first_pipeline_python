@@ -1,24 +1,12 @@
 pipeline {
-    agent any
+    agent {
+        docker { image 'node:24.15.0-alpine3.23' }
+    }
     stages {
-        stage('Build') { 
+        stage('Test') {
             steps {
-                withPythonEnv('python3') {
-                    sh 'pip3 install -r sources/requirements.txt'
-                }
+                sh 'node --eval "console.log(process.platform,process.env.CI)"'
             }
-        }
-        stage('Test') { 
-            steps {
-                withPythonEnv('python3') {
-                    sh 'python3 sources/test_calc.py'
-                }
-            }
-            post {
-                always {
-                    junit 'test-reports/*.xml'
-                }
-            }   
         }
     }
 }
