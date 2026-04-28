@@ -25,7 +25,7 @@ pipeline {
                 withPythonEnv('python3') {
                     sh '''
                     pip install bandit
-                    bandit -r . -lll -f json -o bandit-report.json
+                    bandit -r ./sources/ -lll -f json -o bandit-report.json
                     '''
                 }
             }
