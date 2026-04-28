@@ -14,18 +14,43 @@ pipeline {
                     sh 'python3 sources/test_calc.py'
                 }
             }
-            post {
-                always {
-                    junit 'test-reports/results.xml'
-                }
-            }   
         }
-        stage('Security Scan') { 
+        stage('Vuln Scan Hight') { 
             steps {
                 withPythonEnv('python3') {
                     sh '''
                     pip install bandit
                     bandit -r ./sources/ -lll -f json -o bandit-report.json
+                    '''
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'bandit-report.json'
+                }
+            }   
+        }
+        stage('Secret Detect Scan') { 
+            steps {
+                withPythonEnv('python3') {
+                    sh '''
+                    set -e
+                    pip install detect-secrets
+                    detect-secrets scan > .secrets.baseline
+                    python - <<EOF
+                    import json
+
+                    with open(".secrets.baseline") as f:
+                        data = json.load(f)
+
+                    results = data.get("results", {})
+
+                    if any(results.values()):
+                        print("❌ Secrets détectés !")
+                        exit(1)
+                    else:
+                        print("✅ Aucun secret détecté")
+                    EOF
                     '''
                 }
             }
