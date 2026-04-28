@@ -1,49 +1,53 @@
 pipeline {
     agent any
     stages {
-        stage('Build') { 
+        stage('Build') {
             steps {
                 withPythonEnv('python3') {
                     sh 'pip3 install -r sources/requirements.txt'
                 }
             }
         }
-        stage('Test') { 
+        stage('Test') {
             steps {
                 withPythonEnv('python3') {
                     sh 'python3 sources/test_calc.py'
                 }
             }
         }
-        stage('Vuln Scan Hight') { 
-            steps {
-                withPythonEnv('python3') {
-                    sh '''
-                    pip install bandit
-                    bandit -r ./sources/ -lll -f json -o bandit-report.json
-                    '''
+        stage('Security Scan') {
+            parallel {
+                stage('Vuln Scan Hight') {
+                    steps {
+                        withPythonEnv('python3') {
+                            sh '''
+                            pip install bandit
+                            bandit -r ./sources/ -lll -f json -o bandit-report.json
+                            '''
+                        }
+                    }
+                    post {
+                        always {
+                            archiveArtifacts artifacts: 'bandit-report.json'
+                        }
+                    }
                 }
-            }
-            post {
-                always {
-                    archiveArtifacts artifacts: 'bandit-report.json'
-                }
-            }   
-        }
-        stage('Secret Detect Scan') { 
-            steps {
-                withPythonEnv('python3') {
-                    sh '''
+                stage('Secret Detect Scan') {
+                    steps {
+                        withPythonEnv('python3') {
+                            sh '''
                     set -e
                     pip install detect-secrets
                     detect-secrets scan ./sources --all-files > .secrets.baseline
                     python3 ./jenkins/detect_secrets.py
                     '''
-                }
-            }
-            post {
-                always {
-                    archiveArtifacts artifacts: '.secrets.baseline'
+                        }
+                    }
+                    post {
+                        always {
+                            archiveArtifacts artifacts: '.secrets.baseline'
+                        }
+                    }
                 }
             }
         }
