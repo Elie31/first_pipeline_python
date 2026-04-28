@@ -36,7 +36,7 @@ pipeline {
                     sh '''
                     set -e
                     pip install detect-secrets
-                    detect-secrets scan ./sources --all-files > ./jenkins/.secrets.baseline
+                    detect-secrets scan ./sources --all-files > .secrets.baseline
                     python3 ./jenkins/detect_secrets.py
                     '''
                 }
